@@ -1,0 +1,58 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Contractor{
+  id String @id
+  name String
+  email String
+  password String
+
+  project Project?
+}
+
+model Hired{
+  id String @id
+  name String
+  email String
+  password String
+  description String
+  skills String
+  occupation String
+
+  propose Propose[]
+  project Project?
+}
+
+
+model Project{
+  id Int @id @default(autoincrement())
+  name String
+  description String
+  value Float
+  deadline DateTime
+  category Int
+  contractorId String @unique
+  hiredId String? @unique
+  contractor Contractor @relation(fields: [contractorId], references: [id])
+  hired Hired? @relation(fields: [hiredId], references: [id])
+  
+  propose Propose[]
+}
+
+model Propose{
+  id Int @id @default(autoincrement())
+  description String
+  value Float
+  deadline DateTime
+  hiredId String
+  projectId Int
+  hired Hired @relation(fields: [hiredId], references: [id])
+  project Project @relation(fields: [projectId], references: [id])
+}
